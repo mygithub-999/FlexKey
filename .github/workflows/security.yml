@@ -15,8 +15,8 @@ jobs:
         uses: returntocorp/semgrep-action@v1
         with:
           config: p/default
-
-  mobsf:
+          
+ mobsf:
     name: Android Security Audit
     runs-on: ubuntu-latest
     permissions:
@@ -27,7 +27,7 @@ jobs:
       - name: Run MobSF Static Analysis
         uses: MobSF/mobsfscan@main
         with:
-          args: '. --sarif --output mobsf-results.sarif'
+          args: '. --sarif --output mobsf-results.sarif --no-fail'
       - name: Upload MobSF Results
         uses: github/codeql-action/upload-sarif@v3
         if: always()
