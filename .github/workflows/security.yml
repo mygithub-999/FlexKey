@@ -12,11 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Semgrep
-        uses: returntocorp/semgrep-action@v1
+        uses: semgrep/semgrep@v1
         with:
           config: p/default
-          
- mobsf:
+
+  mobsf:
     name: Android Security Audit
     runs-on: ubuntu-latest
     permissions:
