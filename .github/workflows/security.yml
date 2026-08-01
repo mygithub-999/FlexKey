@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Semgrep
-        uses: semgrep/semgrep@v1
+        uses: returntocorp/semgrep-action@v1
         with:
           config: p/default
 
