@@ -19,6 +19,9 @@ jobs:
   mobsf:
     name: Android Security Audit
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - name: Run MobSF Static Analysis
