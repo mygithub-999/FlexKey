@@ -1,0 +1,6 @@
+{
+  "name": "FlexKey Keyboard",
+  "description": "Open-source Android keyboard engine with adaptive layouts, glide typing, predictive text, privacy guards, and clipboard vault.",
+  "requestFramePermissions": []
+}
+
