@@ -1,0 +1,31 @@
+name: Full Security & SAST Audit
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  semgrep:
+    name: Code Pattern Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Semgrep
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: p/default
+
+  mobsf:
+    name: Android Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run MobSF Static Analysis
+        uses: MobSF/mobsfscan-action@v1
+        with:
+          args: '. --sarif --output mobsf-results.sarif'
+      - name: Upload MobSF Results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: mobsf-results.sarif
