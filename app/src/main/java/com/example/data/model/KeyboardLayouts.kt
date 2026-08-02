@@ -4,19 +4,19 @@ import android.view.KeyEvent
 
 object KeyboardLayouts {
 
-    fun getRows(layoutType: KeyboardLayoutType, shiftState: ShiftState): List<List<KeyModel>> {
+    fun getRows(layoutType: KeyboardLayoutType, shiftState: ShiftState, enterLabel: String = "↵"): List<List<KeyModel>> {
         return when (layoutType) {
-            KeyboardLayoutType.QWERTY -> getQwertyRows(shiftState)
-            KeyboardLayoutType.QWERTZ -> getQwertzRows(shiftState)
-            KeyboardLayoutType.AZERTY -> getAzertyRows(shiftState)
-            KeyboardLayoutType.SYMBOLS_PAGE_1 -> getSymbolsPage1Rows()
-            KeyboardLayoutType.SYMBOLS_PAGE_2 -> getSymbolsPage2Rows()
+            KeyboardLayoutType.QWERTY -> getQwertyRows(shiftState, enterLabel)
+            KeyboardLayoutType.QWERTZ -> getQwertzRows(shiftState, enterLabel)
+            KeyboardLayoutType.AZERTY -> getAzertyRows(shiftState, enterLabel)
+            KeyboardLayoutType.SYMBOLS_PAGE_1 -> getSymbolsPage1Rows(enterLabel)
+            KeyboardLayoutType.SYMBOLS_PAGE_2 -> getSymbolsPage2Rows(enterLabel)
             KeyboardLayoutType.NUMERIC -> getNumericRows()
-            KeyboardLayoutType.EMOJI -> getQwertyRows(shiftState)
+            KeyboardLayoutType.EMOJI -> getQwertyRows(shiftState, enterLabel)
         }
     }
 
-    private fun getQwertyRows(shiftState: ShiftState): List<List<KeyModel>> {
+    private fun getQwertyRows(shiftState: ShiftState, enterLabel: String = "↵"): List<List<KeyModel>> {
         val row1Letters = listOf("q", "w", "e", "r", "t", "y", "u", "i", "o", "p")
         val row1Digits = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "0")
         val row2Letters = listOf("a", "s", "d", "f", "g", "h", "j", "k", "l")
@@ -62,13 +62,13 @@ object KeyboardLayouts {
             KeyModel(keyCode = -4, label = "⚙️", keyType = KeyType.SETTINGS_SWITCH, weight = 1.0f),
             KeyModel(keyCode = ' '.code, label = "Space", keyType = KeyType.SPACE, weight = 3.8f),
             KeyModel(keyCode = '.'.code, label = ".", keyType = KeyType.CHARACTER, weight = 1.0f),
-            KeyModel(keyCode = KeyEvent.KEYCODE_ENTER, label = "↵", keyType = KeyType.ENTER, weight = 1.4f)
+            KeyModel(keyCode = KeyEvent.KEYCODE_ENTER, label = enterLabel, keyType = KeyType.ENTER, weight = 1.4f)
         )
 
         return listOf(row1, row2, row3, row4)
     }
 
-    private fun getQwertzRows(shiftState: ShiftState): List<List<KeyModel>> {
+    private fun getQwertzRows(shiftState: ShiftState, enterLabel: String = "↵"): List<List<KeyModel>> {
         val row1Letters = listOf("q", "w", "e", "r", "t", "z", "u", "i", "o", "p")
         val row2Letters = listOf("a", "s", "d", "f", "g", "h", "j", "k", "l")
         val row3Letters = listOf("y", "x", "c", "v", "b", "n", "m")
@@ -93,12 +93,12 @@ object KeyboardLayouts {
             KeyModel(keyCode = -2, label = "?123", keyType = KeyType.LAYOUT_SWITCH, weight = 1.3f),
             KeyModel(keyCode = ' '.code, label = "Space", keyType = KeyType.SPACE, weight = 4.5f),
             KeyModel(keyCode = '.'.code, label = ".", keyType = KeyType.CHARACTER, weight = 1.0f),
-            KeyModel(keyCode = KeyEvent.KEYCODE_ENTER, label = "↵", keyType = KeyType.ENTER, weight = 1.4f)
+            KeyModel(keyCode = KeyEvent.KEYCODE_ENTER, label = enterLabel, keyType = KeyType.ENTER, weight = 1.4f)
         )
         return listOf(row1, row2, row3, row4)
     }
 
-    private fun getAzertyRows(shiftState: ShiftState): List<List<KeyModel>> {
+    private fun getAzertyRows(shiftState: ShiftState, enterLabel: String = "↵"): List<List<KeyModel>> {
         val row1Letters = listOf("a", "z", "e", "r", "t", "y", "u", "i", "o", "p")
         val row2Letters = listOf("q", "s", "d", "f", "g", "h", "j", "k", "l", "m")
         val row3Letters = listOf("w", "x", "c", "v", "b", "n")
@@ -123,12 +123,12 @@ object KeyboardLayouts {
             KeyModel(keyCode = -2, label = "?123", keyType = KeyType.LAYOUT_SWITCH, weight = 1.3f),
             KeyModel(keyCode = ' '.code, label = "Espace", keyType = KeyType.SPACE, weight = 4.5f),
             KeyModel(keyCode = '.'.code, label = ".", keyType = KeyType.CHARACTER, weight = 1.0f),
-            KeyModel(keyCode = KeyEvent.KEYCODE_ENTER, label = "↵", keyType = KeyType.ENTER, weight = 1.4f)
+            KeyModel(keyCode = KeyEvent.KEYCODE_ENTER, label = enterLabel, keyType = KeyType.ENTER, weight = 1.4f)
         )
         return listOf(row1, row2, row3, row4)
     }
 
-    private fun getSymbolsPage1Rows(): List<List<KeyModel>> {
+    private fun getSymbolsPage1Rows(enterLabel: String = "↵"): List<List<KeyModel>> {
         val row1 = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "0").map {
             KeyModel(keyCode = it.first().code, label = it)
         }
@@ -147,12 +147,12 @@ object KeyboardLayouts {
             KeyModel(keyCode = ','.code, label = ",", keyType = KeyType.CHARACTER, weight = 1.0f),
             KeyModel(keyCode = ' '.code, label = "Space", keyType = KeyType.SPACE, weight = 3.5f),
             KeyModel(keyCode = '.'.code, label = ".", keyType = KeyType.CHARACTER, weight = 1.0f),
-            KeyModel(keyCode = KeyEvent.KEYCODE_ENTER, label = "↵", keyType = KeyType.ENTER, weight = 1.5f)
+            KeyModel(keyCode = KeyEvent.KEYCODE_ENTER, label = enterLabel, keyType = KeyType.ENTER, weight = 1.5f)
         )
         return listOf(row1, row2, row3, row4)
     }
 
-    private fun getSymbolsPage2Rows(): List<List<KeyModel>> {
+    private fun getSymbolsPage2Rows(enterLabel: String = "↵"): List<List<KeyModel>> {
         val row1 = listOf("~", "`", "|", "•", "√", "π", "÷", "×", "¶", "∆").map {
             KeyModel(keyCode = it.first().code, label = it)
         }
@@ -171,7 +171,7 @@ object KeyboardLayouts {
             KeyModel(keyCode = ','.code, label = ",", keyType = KeyType.CHARACTER, weight = 1.0f),
             KeyModel(keyCode = ' '.code, label = "Space", keyType = KeyType.SPACE, weight = 3.5f),
             KeyModel(keyCode = '.'.code, label = ".", keyType = KeyType.CHARACTER, weight = 1.0f),
-            KeyModel(keyCode = KeyEvent.KEYCODE_ENTER, label = "↵", keyType = KeyType.ENTER, weight = 1.5f)
+            KeyModel(keyCode = KeyEvent.KEYCODE_ENTER, label = enterLabel, keyType = KeyType.ENTER, weight = 1.5f)
         )
         return listOf(row1, row2, row3, row4)
     }

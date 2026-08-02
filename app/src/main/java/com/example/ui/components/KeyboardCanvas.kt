@@ -42,6 +42,7 @@ fun KeyboardCanvas(
     isIncognito: Boolean,
     clipboardItems: List<ClipboardEntity>,
     currentInputText: String,
+    enterKeyLabel: String = "↵",
     onKeyClick: (KeyModel) -> Unit,
     onKeyLongClick: ((KeyModel) -> Unit)? = null,
     onCandidateClick: (Candidate) -> Unit,
@@ -54,8 +55,8 @@ fun KeyboardCanvas(
 ) {
     var subView by remember { mutableStateOf(KeyboardSubView.GRID) }
 
-    val rows = remember(activeLayout, shiftState) {
-        KeyboardLayouts.getRows(activeLayout, shiftState)
+    val rows = remember(activeLayout, shiftState, enterKeyLabel) {
+        KeyboardLayouts.getRows(activeLayout, shiftState, enterKeyLabel)
     }
 
     Column(

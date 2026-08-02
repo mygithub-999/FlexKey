@@ -67,6 +67,7 @@ class FlexKeyboardService : InputMethodService(), LifecycleOwner, ViewModelStore
     private var isIncognito by mutableStateOf(false)
     private var candidates by mutableStateOf<List<Candidate>>(emptyList())
     private var currentTextBeforeCursor by mutableStateOf("")
+    private var enterKeyLabel by mutableStateOf("↵")
 
     override fun onCreate() {
         super.onCreate()
@@ -117,6 +118,7 @@ class FlexKeyboardService : InputMethodService(), LifecycleOwner, ViewModelStore
                 isIncognito = isIncognito,
                 clipboardItems = clipboardItems,
                 currentInputText = currentTextBeforeCursor,
+                enterKeyLabel = enterKeyLabel,
                 onKeyClick = { keyModel -> handleKeyClick(keyModel) },
                 onCandidateClick = { candidate -> handleCandidateClick(candidate) },
                 onPinClipToggle = { clip ->
@@ -170,6 +172,7 @@ class FlexKeyboardService : InputMethodService(), LifecycleOwner, ViewModelStore
         inputManager.activeInputConnection = currentInputConnection
         inputManager.activeEditorInfo = info
 
+        enterKeyLabel = inputManager.getEnterKeyLabel()
         isIncognito = inputManager.isPasswordField()
 
         if (inputManager.isAutoCapitalizeNeeded()) {

@@ -78,6 +78,36 @@ class InputConnectionManager {
         }
     }
 
+    fun getEnterKeyLabel(): String {
+        val info = activeEditorInfo ?: return "↵"
+        val imeOptions = info.imeOptions
+        val inputType = info.inputType
+        val isMultiLine = (inputType and InputType.TYPE_TEXT_FLAG_MULTI_LINE) != 0
+
+        if (isMultiLine) {
+            return "↵"
+        }
+
+        val actionMasked = imeOptions and EditorInfo.IME_MASK_ACTION
+        val actionId = if (actionMasked != EditorInfo.IME_ACTION_UNSPECIFIED && actionMasked != EditorInfo.IME_ACTION_NONE) {
+            actionMasked
+        } else if (info.actionId != 0) {
+            info.actionId
+        } else {
+            EditorInfo.IME_ACTION_UNSPECIFIED
+        }
+
+        return when (actionId) {
+            EditorInfo.IME_ACTION_GO -> "Go"
+            EditorInfo.IME_ACTION_SEARCH -> "🔍"
+            EditorInfo.IME_ACTION_SEND -> "Send"
+            EditorInfo.IME_ACTION_NEXT -> "Next"
+            EditorInfo.IME_ACTION_DONE -> "Done"
+            EditorInfo.IME_ACTION_PREVIOUS -> "Prev"
+            else -> "↵"
+        }
+    }
+
     fun handleEnterKey(): Boolean {
         val ic = activeInputConnection ?: return false
         val info = activeEditorInfo
@@ -85,30 +115,40 @@ class InputConnectionManager {
         val inputType = info?.inputType ?: 0
 
         val actionMasked = imeOptions and EditorInfo.IME_MASK_ACTION
-        val actionId = if (info?.actionId != null && info.actionId != 0) info.actionId else actionMasked
+        val actionToPerform = if (actionMasked != EditorInfo.IME_ACTION_UNSPECIFIED && actionMasked != EditorInfo.IME_ACTION_NONE) {
+            actionMasked
+        } else if (info?.actionId != null && info.actionId != 0) {
+            info.actionId
+        } else {
+            EditorInfo.IME_ACTION_UNSPECIFIED
+        }
 
         val isMultiLine = (inputType and InputType.TYPE_TEXT_FLAG_MULTI_LINE) != 0
         val noEnterAction = (imeOptions and EditorInfo.IME_FLAG_NO_ENTER_ACTION) != 0
 
-        if (!isMultiLine && !noEnterAction && actionId != EditorInfo.IME_ACTION_UNSPECIFIED && actionId != EditorInfo.IME_ACTION_NONE) {
-            val handled = try { ic.performEditorAction(actionId) } catch (e: Exception) { false }
-            if (handled) return true
+        // Multi-line fields (e.g. WhatsApp, Instagram chat input): insert newline
+        if (isMultiLine && (actionToPerform == EditorInfo.IME_ACTION_UNSPECIFIED || noEnterAction)) {
+            val committed = try { ic.commitText("\n", 1) } catch (e: Exception) { false }
+            return if (!committed) safeSendKeyEvent(KeyEvent.KEYCODE_ENTER) else true
         }
 
-        return try {
-            if (isMultiLine || actionId == EditorInfo.IME_ACTION_UNSPECIFIED || actionId == EditorInfo.IME_ACTION_NONE) {
-                val committed = ic.commitText("\n", 1)
-                if (!committed) {
-                    safeSendKeyEvent(KeyEvent.KEYCODE_ENTER)
-                } else {
-                    true
-                }
-            } else {
-                safeSendKeyEvent(KeyEvent.KEYCODE_ENTER)
-            }
-        } catch (e: Exception) {
+        // Single-line or fields with explicit actions (e.g. Google Search, Chrome, Search bars)
+        var handled = false
+        if (actionToPerform != EditorInfo.IME_ACTION_UNSPECIFIED && actionToPerform != EditorInfo.IME_ACTION_NONE && !noEnterAction) {
+            handled = try { ic.performEditorAction(actionToPerform) } catch (e: Exception) { false }
+        }
+
+        if (!handled && info?.actionId != null && info.actionId != 0 && info.actionId != actionToPerform) {
+            handled = try { ic.performEditorAction(info.actionId) } catch (e: Exception) { false }
+        }
+
+        // For Google search, Chrome, web inputs, or when performEditorAction alone doesn't trigger submission,
+        // sending KEYCODE_ENTER ensures hardware key listener / form submission is executed.
+        if (!handled || actionToPerform == EditorInfo.IME_ACTION_SEARCH || actionToPerform == EditorInfo.IME_ACTION_GO) {
             safeSendKeyEvent(KeyEvent.KEYCODE_ENTER)
         }
+
+        return true
     }
 
     fun isPasswordField(): Boolean {
